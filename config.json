@@ -1,0 +1,8 @@
+{
+    "port": 8124,
+    "mixpanelKey": "",
+    "statsdHost": "127.0.0.1",
+    "statsdPort": 8125,
+    "csvLog": "./logs/stats.csv",
+    "errorLog": "./logs/errors.log"
+}
