@@ -20,7 +20,7 @@ udpServer.on("message", function (msgBuf, rinfo) {
     
     async.parallel({
         csvLogger: function(callback){
-            var jsonData = JSON.parse(msg.split("|")[2]);
+            var jsonData = JSON.parse(msg.split("|")[2]) || {};
             var csvFields = _.values(jsonData).toString();
             var csvLog = csv()
                         .from(csvFields)
@@ -38,7 +38,7 @@ udpServer.on("message", function (msgBuf, rinfo) {
         
         mixPanelLogger: function(callback){
             var statData = msg.split(":")[0];
-            var jsonData = JSON.parse(msg.split("|")[2]);
+            var jsonData = JSON.parse(msg.split("|")[2]) || {};
             var mixpanel = Mixpanel.init(config.mixpanelKey);
             mixpanel.track(statData, jsonData, function(err) { 
                 if (err){
