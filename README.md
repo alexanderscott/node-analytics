@@ -1,4 +1,4 @@
-TMX-NODE-ANALYTICS
+NODE-ANALYTICS
 ====================
 
 Description
