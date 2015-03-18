@@ -4,7 +4,9 @@ var fs = require('fs'),
     csv = require('csv'),
     _ = require('underscore'),
     Mixpanel = require('mixpanel'),
-    config = require('./config.json');
+    bunyan = require('bunyan'),
+    config = require('./config.json'),
+    log = bunyan.createLogger({name: "node-analytics-proxy", level: config.loglevel });
 
 
 // asynchronous and non-blocking thru event-emitting
@@ -16,7 +18,7 @@ udpServer.on("message", function (msgBuf, rinfo) {
     var now = new Date();
     var dateAndTime = now.toUTCString();
     
-    //console.log(dateAndTime + ": tmx-analytics received: " + msg + " from " + rinfo.address + ":" + rinfo.port);
+    log.debug(dateAndTime + ": tmx-analytics received: " + msg + " from " + rinfo.address + ":" + rinfo.port);
     
     async.parallel({
         csvLogger: function(callback){
@@ -25,7 +27,6 @@ udpServer.on("message", function (msgBuf, rinfo) {
             var csvLog = csv()
                         .from(csvFields)
                         .to(config.csvLog, {flags: 'a', header: true})
-                        //.to(console.log)
                         .on('error', function(error){
                             fs.appendFileSync(config.errorLog, dateAndTime+': CSV LOGGING ERROR: '+error.message+'\n', encoding='utf8');
                             callback(null, false);
@@ -72,9 +73,9 @@ udpServer.on("message", function (msgBuf, rinfo) {
         if(err){
             fs.appendFileSync(config.errorLog, dateAndTime+': ANALYTICS PROCESS ERROR: '+err+'\n', encoding='utf8');
         } else {
-            //console.log(dateAndTime+": tmx-analytics processed: " + msg + " with results: ");
-            //console.log(results);
-            //results should = {csvLogger: true, mixPanelLogger: true, statsdLogger: true}
+            // should output something along the lines of
+            // {csvLogger: true, mixPanelLogger: true, statsdLogger: true}
+            log.info("Processed stat: " + msg + " with results: ", resultes);
         }
     });
     

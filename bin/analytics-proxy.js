@@ -2,6 +2,9 @@
 
 var program = require('commander'),
     fs = require('fs'),
+    bunyan = require('bunyan'),
+    config = require('../config.json'),
+    log = bunyan.createLogger({name: "node-analytics-proxy", level: config.loglevel }),
     forever = require('forever-monitor');
 
 program
@@ -11,7 +14,7 @@ program
     var child = new (forever.Monitor)(__dirname + '/../stats-server.js');
     
     child.start();
-    console.log(__dirname, 'tmx-analytics server started');
+    log.info(__dirname, 'analytics-proxy server started');
 });
 
 program.parse(process.argv);
